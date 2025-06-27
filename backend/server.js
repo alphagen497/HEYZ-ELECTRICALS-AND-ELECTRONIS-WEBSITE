@@ -1,14 +1,15 @@
 // server.js using MongoDB instead of products.json
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
-const PORT = 3000;
+const PORT =  process.env.PORT || 3000;
 
 // Replace this with your MongoDB connection string
 const MONGO_URI = "MONGO_URI";
-const client = new MongoClient("mongodb+srv://mwauraisaac024:2BsBonS3JMPBeldf@cluster0.zmp9cpd.mongodb.net/products?retryWrites=true&w=majority&appName=Cluster0");
+const client = new MongoClient(process.env.MONGODB_URI);
 
 let productsCollection;
 
