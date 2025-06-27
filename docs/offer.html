@@ -130,7 +130,7 @@
 
     async function loadOffers() {
       try {
-        const res = await fetch("http://localhost:3000/api/products");
+        const res = await fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/products");
         products = await res.json();
         const discounted = products.filter(p =>
         p.originalPrice &&
