@@ -36,54 +36,45 @@
       z-index: 10;
       height: 148px;
     }
-    .head{
+
+    .head {
       color: rgb(9, 34, 221);
     }
+
     /* Slideshow Container */
-.slideshow-container {
-  position: relative;
-  top: 100px;
-  width: 100%;
-  max-width: 800px;
-  height: 150px;
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: 10px;
-}
+    .slideshow-container {
+      position: relative;
+      top: 100px;
+      width: 100%;
+      max-width: 800px;
+      height: 150px;
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 10px;
+    }
 
-/* Base Style for All Images in Slideshow */
-.slideshow-image {
-  position: absolute;
-  top: 0;
-  left: 100%; /* Start off-screen to the right */
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Fit image inside container without cropping */
-  opacity: 10;
-  z-index: 0;
-  transition: left 0.5s ease-in-out;
-}
+    .slideshow-image {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 10;
+      z-index: 0;
+      transition: left 0.5s ease-in-out;
+    }
 
-/* Currently Active Image */
-.slideshow-image.active {
-  left: 0;        /* Slide into visible area */
-  opacity: 1;
-  z-index: 1;
-}
+    .slideshow-image.active {
+      left: 0;
+      opacity: 1;
+      z-index: 1;
+    }
 
-/* Image that Just Moved Out */
-.slideshow-image.prev {
-  left: -100%;    /* Move off-screen to the left */
-  opacity: 0;
-  z-index: 0;
-}
-
-    .x {
-      font-size: 1.2em;
-      position :absolute;
-      top: 235px;
-      left: 130px;
-
+    .slideshow-image.prev {
+      left: -100%;
+      opacity: 0;
+      z-index: 0;
     }
 
     .bt {
@@ -96,7 +87,7 @@
       margin-bottom: 40px;
       flex-shrink: 1;
       position: absolute;
-      left: 20px;
+      right: 20px;
       top: 240px;
       display: block;
     }
@@ -112,15 +103,19 @@
       align-items: center;
       justify-content: center;
       margin: 10px auto;
-      position:absolute;
+      position: absolute;
       top: 5px;
       left: 30px;
       flex-shrink: 50;
     }
 
     @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .cta-button {
@@ -141,9 +136,15 @@
     }
 
     @keyframes slideIn {
-      0% { transform: translateX(-50%); }
-      50% { transform: translateX(0); }
-      100% { transform: translateX(50%); }
+      0% {
+        transform: translateX(-50%);
+      }
+      50% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(50%);
+      }
     }
 
     .hero-grid {
@@ -166,62 +167,110 @@
     }
 
     @media (max-width: 600px) {
-      .bt, .cta-button {
+      .bt,
+      .cta-button {
         width: 100%;
         margin-top: 10px;
       }
     }
-    .txt{
+
+    .txt {
       background-image: url("image.jpg");
-      background-size:cover ;
-      background-clip:text ;
-      -webkit-background-clip:text;
+      background-size: cover;
+      background-clip: text;
+      -webkit-background-clip: text;
       color: transparent;
       border: none;
-      animation:bounce 2s infinite;
-      font-size: 2rem; 
-      position:absolute;
+      animation: bounce 2s infinite;
+      font-size: 2rem;
+      position: absolute;
       top: 150px;
       left: 20px;
-      font-weight: 900;  
-
+      font-weight: 900;
     }
+
     @keyframes bounce {
-      0%{transform:translateY(0);}
-      40%{transform:translateY(20px);}
-      60%{transform: translateY(10px);}
-      
+      0% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(20px);
+      }
+      60% {
+        transform: translateY(10px);
+      }
     }
-    
-.phone-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 20px;
-  color: #333;
-  margin-left: 250px;
-  margin-top: opx;
-}
 
-.phone-icon {
-  position: relative;
-  color: green;
-  animation: pulse 2s infinite;
-}
+    .phone-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      color: #333;
+      margin-left: 250px;
+      margin-top: 0px;
+    }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 128, 0, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 15px rgba(0, 128, 0, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 128, 0, 0);
-  }
-}
+    .phone-icon {
+      position: relative;
+      color: green;
+      animation: pulse 2s infinite;
+    }
 
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(0, 128, 0, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 15px rgba(0, 128, 0, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(0, 128, 0, 0);
+      }
+    }
 
+    /* 👇 New styles for animated paragraph */
+    .message-container {
+      width: 100%;
+      max-width: 800px;
+      height: 60px;
+      overflow: hidden;
+      position: absolute;
+      top: 235px;
+      left: 30px;
+      text-align: left;
+    }
+
+    .message-container p {
+      font-size: 1.2rem;
+      color: #222;
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: showMessage 6s ease-in-out forwards;
+      margin: 0;
+      font-weight: normal;
+    }
+
+    @keyframes showMessage {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      80% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+    }
   </style>
 </head>
 <body>
@@ -230,21 +279,21 @@
       <h1 class="head">HEYZ ELECTRICALS AND ELECTRONICS</h1>
       <p>WHEN IT COMES TO <span class="kq">QUALITY</span> IN TERMS OF GOODS AND SERVICES WE ARE THE BEST.</p>
       <div class="phone-container">
-  <i class="fas fa-phone phone-icon"></i>
-  <span>+254 790678787</span>
-</div>
-
+        <i class="fas fa-phone phone-icon"></i>
+        <span>+254 790678787</span>
+      </div>
     </div>
 
     <div class="slideshow-container" id="slideshow"></div>
 
-    <p class="x">Power Up Your Life with the Latest Tech</p>
+    <!-- 👇 Replaced .x paragraph with animated message container -->
+    <div class="message-container" id="message-container"></div>
+
     <button class="bt" id="myButton">Click Me</button>
     <button class="txt">WELCOME</button>
     <div class="box">HEYZ</div>
     <a href="products.html" class="cta-button" id="shop">Shop Now</a>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <div class="hero-grid">
       <img src="istockphoto-2161207840-612x612.jpg" alt="Banner Image" />
@@ -253,12 +302,12 @@
       <img src="istockphoto-2159484144-612x612.jpg" alt="Banner Image" />
       <img src="istockphoto-2159484373-1024x1024.jpg" alt="Banner Image" />
       <img src="istockphoto-1022485434-612x612.jpg" alt="Banner Image" />
-      <img src="istockphoto-2159484356-612x612.jpg" alt="Banner Image"/>
-      <img src="istockphoto-2159484022-612x612.jpg" alt="Banner Image"/>
-      <img src="istockphoto-1466278541-612x612.jpg" alt="Banner Image"/>
-      <img src="istockphoto-1190657497-612x612.webp" alt="Banner Image"/>
-      <img src="istockphoto-537469079-612x612.jpg" alt="Banner Image"/>
-      <img src="image.jpg" alt="Banner Image"/>
+      <img src="istockphoto-2159484356-612x612.jpg" alt="Banner Image" />
+      <img src="istockphoto-2159484022-612x612.jpg" alt="Banner Image" />
+      <img src="istockphoto-1466278541-612x612.jpg" alt="Banner Image" />
+      <img src="istockphoto-1190657497-612x612.webp" alt="Banner Image" />
+      <img src="istockphoto-537469079-612x612.jpg" alt="Banner Image" />
+      <img src="image.jpg" alt="Banner Image" />
     </div>
   </div>
 
@@ -286,7 +335,6 @@
     });
 
     fetch('http://localhost:3000/api/products')
-
       .then(response => response.json())
       .then(products => {
         const slideshow = document.getElementById("slideshow");
@@ -311,6 +359,32 @@
         }
       })
       .catch(error => console.error("Failed to load products.json:", error));
+
+    // 👇 Rotating paragraph messages
+    const messages = [
+      "Welcome to HEYZ ELECTRICALS AND ELECTRONICS!",
+      "We provide quality electronic products at affordable prices.",
+      "Fast delivery, trusted service, and unbeatable deals.",
+      "Shop now and experience the future of smart electricals!"
+    ];
+
+    const messageContainer = document.getElementById('message-container');
+    let currentMsg = 0;
+
+    function showMessage(index) {
+      messageContainer.innerHTML = '';
+      const para = document.createElement('p');
+      para.textContent = messages[index];
+      messageContainer.appendChild(para);
+    }
+
+    function cycleMessages() {
+      showMessage(currentMsg);
+      currentMsg = (currentMsg + 1) % messages.length;
+    }
+
+    cycleMessages();
+    setInterval(cycleMessages, 6000);
   </script>
 </body>
 </html>
