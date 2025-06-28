@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ALPHAGEN COMPANY.LTD</title>
   <style>
-    /* ...existing CSS unchanged... */
+    /* ...your existing CSS here (unchanged)... */
   </style>
 </head>
 <body>
   <div class="top-bar">
-    <!-- ...top bar unchanged... -->
+    <!-- Your top bar content including cart, favorite, and offersIcon goes here -->
   </div>
 
   <div class="filters">
@@ -32,20 +32,6 @@
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const favorites = new Set(JSON.parse(localStorage.getItem("favorites")) || []);
     let products = [];
-
-    document.getElementById("cartIcon").addEventListener("click", () => {
-      const dropdown = document.getElementById("cartDropdown");
-      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    });
-
-    document.getElementById("favoriteIcon").addEventListener("click", () => {
-      const dropdown = document.getElementById("favoriteDropdown");
-      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    });
-
-    document.getElementById("offersIcon").addEventListener("click", () => {
-      window.location.href = "offer.html";
-    });
 
     function addToCart(productId) {
       const product = products.find(p => p.id === productId);
@@ -105,24 +91,12 @@
       });
     }
 
-    window.addEventListener("DOMContentLoaded", async () => {
-      speakIntro();
-      await fetchProducts();
-      setupFilters();
-      updateCartUI();
-      updateFavoriteUI();
-    });
-
     function speakIntro() {
       const message = "Welcome to our products page. We have all kinds of electronics and electricals you are in need of, all brands of your taste. Scroll down or search in the search bar for a specific product.";
       if (speechSynthesis.speaking) speechSynthesis.cancel();
       const speech = new SpeechSynthesisUtterance(message);
       speechSynthesis.speak(speech);
     }
-
-    window.addEventListener("beforeunload", () => {
-      if (speechSynthesis.speaking) speechSynthesis.cancel();
-    });
 
     async function fetchProducts() {
       try {
@@ -213,6 +187,43 @@
         container.appendChild(card);
       });
     }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      // Only run JS after DOM is ready
+      speakIntro();
+      await fetchProducts();
+      setupFilters();
+      updateCartUI();
+      updateFavoriteUI();
+
+      const cartIcon = document.getElementById("cartIcon");
+      const favoriteIcon = document.getElementById("favoriteIcon");
+      const offersIcon = document.getElementById("offersIcon");
+
+      if (cartIcon) {
+        cartIcon.addEventListener("click", () => {
+          const dropdown = document.getElementById("cartDropdown");
+          dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        });
+      }
+
+      if (favoriteIcon) {
+        favoriteIcon.addEventListener("click", () => {
+          const dropdown = document.getElementById("favoriteDropdown");
+          dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        });
+      }
+
+      if (offersIcon) {
+        offersIcon.addEventListener("click", () => {
+          window.location.href = "offer.html";
+        });
+      }
+    });
+
+    window.addEventListener("beforeunload", () => {
+      if (speechSynthesis.speaking) speechSynthesis.cancel();
+    });
   </script>
 </body>
 </html>
