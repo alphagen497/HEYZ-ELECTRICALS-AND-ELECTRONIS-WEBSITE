@@ -386,15 +386,16 @@
 
   <script>
     let currentUtterance;
-    document.getElementById("myButton").addEventListener("click", function () {
-      const message = "THANKS FOR CHOOSING HAYIZ ELECTRICAL AND ELECTRONICS. For customercare , dial the phone number above.  Click the shop now button to shop with us";
-      if (speechSynthesis.speaking) speechSynthesis.cancel();
-      currentUtterance = new SpeechSynthesisUtterance(message);
-      currentUtterance.rate = 1;
-      currentUtterance.pitch = 1;
-      currentUtterance.volume = 1;
-      speechSynthesis.speak(currentUtterance);
-    });
+document.getElementById("myButton").addEventListener("click", function () {
+  const message = "Thank you for choosing Hayiz Electrical and Electronics. For customer care, dial the phone number above. Click the 'Shop Now' button to shop with us.";
+  if (speechSynthesis.speaking) speechSynthesis.cancel();
+  currentUtterance = new SpeechSynthesisUtterance(message);
+  currentUtterance.rate = 1;   // Normal speed
+  currentUtterance.pitch = 1;  // Normal tone
+  currentUtterance.volume = 1; // Full volume
+  speechSynthesis.speak(currentUtterance);
+});
+
 
     document.getElementById("shop").addEventListener("click", function () {
       if (speechSynthesis.speaking) speechSynthesis.cancel();
