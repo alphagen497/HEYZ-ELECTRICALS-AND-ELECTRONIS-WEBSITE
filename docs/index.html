@@ -41,7 +41,6 @@
       color: rgb(9, 34, 221);
     }
 
-    /* Slideshow Container */
     .slideshow-container {
       position: relative;
       top: 100px;
@@ -166,14 +165,6 @@
       transform: scale(1.05);
     }
 
-    @media (max-width: 600px) {
-      .bt,
-      .cta-button {
-        width: 100%;
-        margin-top: 10px;
-      }
-    }
-
     .txt {
       background-image: url("image.jpg");
       background-size: cover;
@@ -229,7 +220,6 @@
       }
     }
 
-    /* 👇 New styles for animated paragraph */
     .message-container {
       width: 100%;
       max-width: 800px;
@@ -271,6 +261,69 @@
         transform: translateY(40px);
       }
     }
+
+    /* 👇 Responsive fixes for small screens */
+    @media (max-width: 600px) {
+      .bt {
+        position: static;
+        margin: 20px auto;
+        display: block;
+        width: 90%;
+      }
+
+      .box {
+        position: static;
+        margin: 10px auto;
+      }
+
+      .txt {
+        position: static;
+        font-size: 1.5rem;
+        margin-top: 20px;
+        text-align: center;
+        width: 100%;
+      }
+
+      .head {
+        font-size: 1.2rem;
+        padding: 0 10px;
+      }
+
+      .kq {
+        display: inline;
+        font-weight: bold;
+      }
+
+      .phone-container {
+        margin-left: 0;
+        justify-content: center;
+        font-size: 16px;
+        flex-wrap: wrap;
+      }
+
+      .d_flex {
+        position: static;
+        margin: 0 auto;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+      }
+
+      .cta-button {
+        position: static;
+        width: 90%;
+        margin: 20px auto;
+        display: block;
+        clip-path: none;
+        animation: none;
+      }
+
+      .message-container {
+        position: static;
+        margin: 10px auto;
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -285,8 +338,6 @@
     </div>
 
     <div class="slideshow-container" id="slideshow"></div>
-
-    <!-- 👇 Replaced .x paragraph with animated message container -->
     <div class="message-container" id="message-container"></div>
 
     <button class="bt" id="myButton">Click Me</button>
@@ -316,11 +367,9 @@
 
     document.getElementById("myButton").addEventListener("click", function () {
       const message = "THANKS FOR CHOOSING HAYIZ ELECTRICAL AND ELECTRONICS. WELCOME ALL. THE PLACE OF QUALITY, AND WHEN I SAY QUALITY I REALLY MEAN IT — 'BEST QUALITY'. FROM SERVICES TO GOODS, IT'S ALL OF BEST QUALITY. SHOP with us and YOU WON'T REGRET IT. We have ALL kinds of electronics and electricals you are in need of. To shop with us, click the SHOP NOW button on the right top corner.";
-
       if (speechSynthesis.speaking) {
         speechSynthesis.cancel();
       }
-
       currentUtterance = new SpeechSynthesisUtterance(message);
       currentUtterance.rate = 1;
       currentUtterance.pitch = 1;
@@ -339,7 +388,6 @@
       .then(products => {
         const slideshow = document.getElementById("slideshow");
         let index = 0;
-
         products.forEach((product, i) => {
           const img = document.createElement("img");
           img.src = product.image || (product.images?.[0] ?? "https://via.placeholder.com/800x150?text=No+Image");
@@ -360,7 +408,6 @@
       })
       .catch(error => console.error("Failed to load products.json:", error));
 
-    // 👇 Rotating paragraph messages
     const messages = [
       "Welcome to HEYZ ELECTRICALS AND ELECTRONICS!",
       "We provide quality electronic products at affordable prices.",
