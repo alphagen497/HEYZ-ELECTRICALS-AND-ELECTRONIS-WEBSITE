@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ALPHAGEN COMPANY.LTD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     * {
       box-sizing: border-box;
@@ -42,14 +43,13 @@
     }
 
     .slideshow-container {
-      position: relative;
-      top: 100px;
       width: 100%;
       max-width: 800px;
       height: 150px;
       margin: 0 auto;
       overflow: hidden;
       border-radius: 10px;
+      position: relative;
     }
 
     .slideshow-image {
@@ -225,9 +225,6 @@
       max-width: 800px;
       height: 60px;
       overflow: hidden;
-      position: absolute;
-      top: 235px;
-      left: 30px;
       text-align: left;
     }
 
@@ -262,7 +259,14 @@
       }
     }
 
-    /* 👇 Responsive fixes for small screens */
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      top: 100px;
+    }
+
     @media (max-width: 600px) {
       .bt {
         position: static;
@@ -318,10 +322,20 @@
         animation: none;
       }
 
+      .content-wrapper {
+        flex-direction: column-reverse;
+      }
+
       .message-container {
+        order: -1;
         position: static;
-        margin: 10px auto;
+        margin-bottom: 10px;
+        width: 90%;
         text-align: center;
+      }
+
+      .slideshow-container {
+        margin-top: 10px;
       }
     }
   </style>
@@ -337,14 +351,15 @@
       </div>
     </div>
 
-    <div class="slideshow-container" id="slideshow"></div>
-    <div class="message-container" id="message-container"></div>
+    <div class="content-wrapper">
+      <div class="message-container" id="message-container"></div>
+      <div class="slideshow-container" id="slideshow"></div>
+    </div>
 
     <button class="bt" id="myButton">Click Me</button>
     <button class="txt">WELCOME</button>
     <div class="box">HEYZ</div>
     <a href="products.html" class="cta-button" id="shop">Shop Now</a>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <div class="hero-grid">
       <img src="istockphoto-2161207840-612x612.jpg" alt="Banner Image" />
@@ -364,12 +379,9 @@
 
   <script>
     let currentUtterance;
-
     document.getElementById("myButton").addEventListener("click", function () {
-      const message = "THANKS FOR CHOOSING HAYIZ ELECTRICAL AND ELECTRONICS. WELCOME ALL. THE PLACE OF QUALITY, AND WHEN I SAY QUALITY I REALLY MEAN IT — 'BEST QUALITY'. FROM SERVICES TO GOODS, IT'S ALL OF BEST QUALITY. SHOP with us and YOU WON'T REGRET IT. We have ALL kinds of electronics and electricals you are in need of. To shop with us, click the SHOP NOW button on the right top corner.";
-      if (speechSynthesis.speaking) {
-        speechSynthesis.cancel();
-      }
+      const message = "THANKS FOR CHOOSING HAYIZ ELECTRICAL AND ELECTRONICS...";
+      if (speechSynthesis.speaking) speechSynthesis.cancel();
       currentUtterance = new SpeechSynthesisUtterance(message);
       currentUtterance.rate = 1;
       currentUtterance.pitch = 1;
@@ -378,9 +390,7 @@
     });
 
     document.getElementById("shop").addEventListener("click", function () {
-      if (speechSynthesis.speaking) {
-        speechSynthesis.cancel();
-      }
+      if (speechSynthesis.speaking) speechSynthesis.cancel();
     });
 
     fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/products")
@@ -396,7 +406,6 @@
           if (i === 0) img.classList.add("active");
           slideshow.appendChild(img);
         });
-
         const images = document.querySelectorAll(".slideshow-image");
         if (images.length > 1) {
           setInterval(() => {
@@ -414,22 +423,18 @@
       "Fast delivery, trusted service, and unbeatable deals.",
       "Shop now and experience the future of smart electricals!"
     ];
-
     const messageContainer = document.getElementById('message-container');
     let currentMsg = 0;
-
     function showMessage(index) {
       messageContainer.innerHTML = '';
       const para = document.createElement('p');
       para.textContent = messages[index];
       messageContainer.appendChild(para);
     }
-
     function cycleMessages() {
       showMessage(currentMsg);
       currentMsg = (currentMsg + 1) % messages.length;
     }
-
     cycleMessages();
     setInterval(cycleMessages, 6000);
   </script>
