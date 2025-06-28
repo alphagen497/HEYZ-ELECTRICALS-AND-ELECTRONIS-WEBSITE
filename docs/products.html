@@ -355,9 +355,9 @@
 
     async function fetchProducts() {
       try {
-        const res = await fetch("http://localhost:3000/api/products");
+        const res = await fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/products");
         if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-        products = await res.json();
+        products = (await res.json()).map(p => ({ ...p, id: p._id }));
         populateFilterOptions();
         renderProducts(products);
       } catch (err) {
@@ -418,7 +418,7 @@
           <div style="margin-top:10px;">
             <button onclick="addToCart(${product.id})" class="kat">Add to Cart</button>
             <button onclick="toggleFavorite(${product.id})" class="hat">❤️</button>
-            <button onclick="window.location.href='product.html?id=${product._id}'" class="viuu">View Product</button>
+            <button onclick="window.location.href='product.html?id=${product.id}'" class="viuu">View Product</button>
           </div>
         `;
         container.appendChild(card);
@@ -426,9 +426,9 @@
     }
   
 
-window.addEventListener("DOMContentLoaded", () => {
-  loadProducts(currentPage);
-});
+//window.addEventListener("DOMContentLoaded", () => {
+ // loadProducts(currentPage);
+//});
 
   </script>
 </body>
