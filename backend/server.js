@@ -1,22 +1,20 @@
-// server.js using MongoDB instead of products.json
+// server.js - MongoDB + Express Backend for Products API
+
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
-const PORT =  process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-// Replace this with your MongoDB connection string
-const MONGO_URI = "MONGO_URI";
 const client = new MongoClient(process.env.MONGODB_URI);
-
 let productsCollection;
 
 app.use(cors());
 app.use(express.json());
 
-
+// Validation function for product fields
 function validateProduct(data) {
   const { name, price, quantity, description } = data;
   return (
@@ -28,33 +26,28 @@ function validateProduct(data) {
   );
 }
 
-async function startServer() {
+// API Routes
+app.get("/api/products", async (req, res) => {
   try {
-    await client.connect();
-    const db = client.db("products"); // or any name you like
-    productsCollection = db.collection("products");
-    console.log("✅ Connected to MongoDB");
+    const products = await productsCollection.find().toArray();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+});
 
-    // GET all products
-    app.get("/api/products", async (req, res) => {
-      const products = await productsCollection.find().toArray();
-      res.json(products);
+app.get("/api/products/:id", async (req, res) => {
+  try {
+    const product = await productsCollection.findOne({
+      _id: new ObjectId(req.params.id),
     });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.json(product);
+  } catch {
+    res.status(400).json({ error: "Invalid product ID" });
+  }
+});
 
-    // GET single product by ID
-    app.get("/api/products/:id", async (req, res) => {
-      try {
-        const product = await productsCollection.findOne({
-          _id: new ObjectId(req.params.id),
-        });
-        if (!product) return res.status(404).json({ error: "Product not found" });
-        res.json(product);
-      } catch {
-        res.status(400).json({ error: "Invalid product ID" });
-      }
-    });
-
-    // POST a new product
 app.post("/api/products", async (req, res) => {
   const productData = req.body;
 
@@ -62,14 +55,14 @@ app.post("/api/products", async (req, res) => {
     return res.status(400).json({ error: "Invalid product data" });
   }
 
-  // ✅ Automatically set offerExpiry if discounted
+  // Add offerExpiry if discounted
   if (
     typeof productData.originalPrice === "number" &&
     typeof productData.price === "number" &&
     productData.originalPrice > productData.price
   ) {
     const expiry = new Date();
-    expiry.setDate(expiry.getDate() + 7); // 7 days from now
+    expiry.setDate(expiry.getDate() + 7);
     productData.offerExpiry = expiry;
   }
 
@@ -77,9 +70,6 @@ app.post("/api/products", async (req, res) => {
   res.status(201).json({ ...productData, _id: result.insertedId });
 });
 
-
-    // PUT (update) product by ID
-   // PUT (update) product by ID
 app.put("/api/products/:id", async (req, res) => {
   const updatedData = req.body;
 
@@ -91,17 +81,15 @@ app.put("/api/products/:id", async (req, res) => {
     const filter = { _id: new ObjectId(req.params.id) };
     const updateOps = { $set: updatedData };
 
-    // Check if product is now discounted
     if (
       typeof updatedData.originalPrice === "number" &&
       typeof updatedData.price === "number"
     ) {
       if (updatedData.originalPrice > updatedData.price) {
         const expiry = new Date();
-        expiry.setDate(expiry.getDate() + 7); // 7 days from now
+        expiry.setDate(expiry.getDate() + 7);
         updateOps.$set.offerExpiry = expiry;
       } else {
-        // No longer discounted → remove offerExpiry
         updateOps.$unset = { offerExpiry: "" };
       }
     }
@@ -119,28 +107,35 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
-
-    // DELETE product by ID
-    app.delete("/api/products/:id", async (req, res) => {
-      try {
-        const result = await productsCollection.findOneAndDelete({
-          _id: new ObjectId(req.params.id),
-        });
-
-        if (!result.value) return res.status(404).json({ error: "Product not found" });
-        res.json({ message: "Product deleted", product: result.value });
-      } catch {
-        res.status(400).json({ error: "Invalid product ID" });
-      }
+app.delete("/api/products/:id", async (req, res) => {
+  try {
+    const result = await productsCollection.findOneAndDelete({
+      _id: new ObjectId(req.params.id),
     });
 
-    // Start the server
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-    });
+    if (!result.value) return res.status(404).json({ error: "Product not found" });
+    res.json({ message: "Product deleted", product: result.value });
+  } catch {
+    res.status(400).json({ error: "Invalid product ID" });
+  }
+});
+
+// Connect to MongoDB
+async function startServer() {
+  try {
+    console.log("🔄 Connecting to MongoDB...");
+    await client.connect();
+    const db = client.db("products");
+    productsCollection = db.collection("products");
+    console.log("✅ MongoDB connected.");
   } catch (err) {
     console.error("❌ Failed to connect to MongoDB", err);
+    process.exit(1); // Stop the server if MongoDB fails
   }
 }
 
+// Start everything
 startServer();
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
