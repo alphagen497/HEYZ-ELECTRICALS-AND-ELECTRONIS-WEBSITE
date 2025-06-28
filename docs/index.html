@@ -387,7 +387,7 @@
   <script>
     let currentUtterance;
     document.getElementById("myButton").addEventListener("click", function () {
-      const message = "THANKS FOR CHOOSING HAYIZ ELECTRICAL AND ELECTRONICS FOR CUSTOMERS CARE , DIAL THE PHONE NUMBER ABOVE  CLICK THE SHOP NOW BUTTON TO SHOP WITH us";
+      const message = "THANKS FOR CHOOSING HAYIZ ELECTRICAL AND ELECTRONICS ,  FOR CUSTOMERS CARE , DIAL THE PHONE NUMBER ABOVE  CLICK THE SHOP NOW BUTTON TO SHOP WITH us";
       if (speechSynthesis.speaking) speechSynthesis.cancel();
       currentUtterance = new SpeechSynthesisUtterance(message);
       currentUtterance.rate = 1;
