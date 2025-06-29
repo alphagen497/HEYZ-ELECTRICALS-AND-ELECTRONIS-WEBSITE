@@ -132,12 +132,17 @@
       try {
         const res = await fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/products");
         products = await res.json();
-        const discounted = products.filter(p =>
-        p.originalPrice &&
-        p.originalPrice > p.price &&
-        new Date(p.offerExpiry) > new Date()
-        );
 
+        const discounted = products.filter(p =>
+       p.originalPrice &&
+       p.price &&
+       parseFloat(p.originalPrice) > parseFloat(p.price) &&
+       p.offerExpiry &&
+       !isNaN(new Date(p.offerExpiry)) &&
+       new Date(p.offerExpiry) > new Date());
+       console.log("All products:", products);
+       console.log("Discounted offers:", discounted);
+       
 
         const container = document.getElementById("offersContainer");
         if (!discounted.length) {
