@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ALPHAGEN COMPANY.LTD</title>
+  <title>ALPHAGEN COMPANY.LTD - Offers</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -99,9 +99,10 @@
           card.className = "product-card";
 
           const timeLeft = getTimeLeft(product.offerExpiry);
+          const imageUrl = product.images?.[0] || "https://via.placeholder.com/250x180?text=No+Image";
 
           card.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" />
+            <img src="${imageUrl}" alt="${product.name}" />
             <div class="product-info">
               <h3>${product.name}</h3>
               <p>
@@ -136,15 +137,27 @@
       return `${days}d ${hours}h ${mins}m`;
     }
 
-    function addToCart(id) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      if (!cart.includes(id)) {
-        cart.push(id);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        alert("Added to cart!");
-      } else {
-        alert("Already in cart.");
-      }
+    function addToCart(productId) {
+      fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/products/" + productId)
+        .then(res => res.json())
+        .then(product => {
+          const cart = JSON.parse(localStorage.getItem("cart")) || [];
+          const existing = cart.find(p => p.id === product._id);
+          if (existing) {
+            existing.quantity += 1;
+            alert("Quantity increased in cart.");
+          } else {
+            cart.push({
+              id: product._id,
+              name: product.name,
+              price: Number(product.price),
+              quantity: 1
+            });
+            alert("Added to cart!");
+          }
+          localStorage.setItem("cart", JSON.stringify(cart));
+        })
+        .catch(err => console.error("Failed to add to cart:", err));
     }
 
     function addToFavorites(id) {
