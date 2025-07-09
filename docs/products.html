@@ -3,27 +3,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ALPHAGEN COMPANY.LTD</title>
+  <meta name="description" content="HEYZ ELECTRICALS AND ELECTRONICS - Trusted supplier of quality electrical goods and electronics in Kenya. Affordable prices, fast delivery.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <link rel="icon" href="favicon.ico" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f4f4f4;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; }
+
+    .navbar {
+      background: #0d6efd;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
-    h1 {
-      color: #333;
-    }
+    .navbar .logo { font-weight: bold; font-size: 1.4rem; }
+    .navbar .nav-links { list-style: none; display: flex; gap: 20px; }
+    .navbar .nav-links a { color: white; text-decoration: none; font-weight: bold; }
+
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 20px;
+      margin: 20px;
     }
     .filters {
-      margin-bottom: 15px;
+      margin: 20px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
@@ -37,6 +51,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 20px;
+      padding: 20px;
     }
     .product-card {
       background: white;
@@ -75,6 +90,15 @@
       color: green;
       font-weight: bold;
     }
+    .product-card button {
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #ecf1f6;
+      color: rgb(32, 32, 32);
+    }
     .icons {
       display: flex;
       gap: 20px;
@@ -110,57 +134,23 @@
     .dropdown-item {
       margin-bottom: 8px;
     }
-    .star-offer {
-      width: 130px;
-      height: 130px;
-      background: radial-gradient(circle at center, #ff7300 60%, #e1f108 100%);
-      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Arial Black', sans-serif;
-      font-size: 18px;
-      color: red;
-      cursor: pointer;
-      box-shadow: 0 0 15px rgb(255, 94, 0);
-      animation: pulseBlast 2s infinite;
-    }
-    @keyframes pulseBlast {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 0 15px rgb(236, 37, 37);
-      }
-      50% {
-        transform: scale(1.1);
-        box-shadow: 0 0 25px rgb(246, 26, 26);
-      }
-    }
-    .blast-text {
-      pointer-events: none;
-      text-align: center;
-      animation: flickerText 1.5s infinite;
-      color: white;
-      padding-bottom: 10px;
-    }
-    @keyframes flickerText {
-      0%, 100% { opacity: 1; }
-      45% { opacity: 0.8; }
-      55% { opacity: 0.4; }
-      60% { opacity: 0.9; }
-      75% { opacity: 0.2; }
-      85% { opacity: 1; }
-    }
   </style>
 </head>
 <body>
+  <nav class="navbar">
+    <div class="logo">HEYZ</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="About.html">About</a></li>
+      <li><a href="Contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
   <div class="top-bar">
     <div>
       <h1>Welcome to our Products page</h1>
       <p>Here you will find products of your choice and taste</p>
-    </div>
-    
-    <div id="offersIcon" class="star-offer" title="Offers">
-      <span class="blast-text">Offers</span>
     </div>
 
     <div class="icons">
@@ -181,8 +171,6 @@
         </div>
       </div>
     </div>
-
-    
   </div>
 
   <div class="filters">
@@ -199,7 +187,10 @@
     <div id="productsContainer" aria-live="polite"></div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
+    AOS.init();
+
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const favorites = new Set(JSON.parse(localStorage.getItem("favorites")) || []);
     let products = [];
@@ -220,9 +211,6 @@
       document.getElementById("favoriteIcon")?.addEventListener("click", () => {
         toggleDropdown("favoriteDropdown");
       });
-      document.getElementById("offersIcon")?.addEventListener("click", () => {
-        window.location.href = "offer.html";
-      });
     }
 
     function toggleDropdown(id) {
@@ -235,7 +223,7 @@
     function speakIntro() {
       const message = "Welcome to our products page. We have all kinds of electronics and electricals you are in need of.";
       const speech = new SpeechSynthesisUtterance(message);
-      speechSynthesis.cancel(); // clear any previous speech
+      speechSynthesis.cancel();
       speechSynthesis.speak(speech);
     }
 
@@ -304,6 +292,7 @@
       list.forEach(product => {
         const card = document.createElement("div");
         card.className = "product-card";
+        card.setAttribute("data-aos", "fade-up");
         const image = product.images?.[0] || "https://via.placeholder.com/200x150?text=No+Image";
         card.innerHTML = `
           <img src="${image}" alt="${product.name}" />
@@ -311,7 +300,7 @@
           <p>${product.description || ""}</p>
           <span>Price: Ksh ${product.price}</span>
           <span>Quantity: ${product.quantity || 0}</span>
-          <div style="margin-top:10px;">
+          <div>
             <button onclick="addToCart('${product.id}')">Add to Cart</button>
             <button onclick="toggleFavorite('${product.id}')">❤️</button>
             <button onclick="window.location.href='product.html?id=${product.id}'">View Product</button>
@@ -378,7 +367,6 @@
         }
       });
     }
-    //here
   </script>
 </body>
 </html>
