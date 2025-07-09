@@ -4,8 +4,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
-const adminRoutes = require('./routes/admin');
-app.use('/api/admin', adminRoutes);
 
 const verifyToken = require("./middleware/auth");
 
