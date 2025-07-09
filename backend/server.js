@@ -4,6 +4,8 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
+const verifyToken = require("./middleware/auth");
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,6 +15,10 @@ let productsCollection;
 
 app.use(cors());
 app.use(express.json());
+
+const adminRoutes = require('./routes/admin');
+app.use('/api/admin', adminRoutes);
+
 
 // Validation function for product fields
 function validateProduct(data) {
@@ -48,7 +54,7 @@ app.get("/api/products/:id", async (req, res) => {
   }
 });
 
-app.post("/api/products", async (req, res) => {
+app.post("/api/products",verifyToken, async (req, res) => {
   const productData = req.body;
 
   if (!validateProduct(productData)) {
@@ -70,7 +76,7 @@ app.post("/api/products", async (req, res) => {
   res.status(201).json({ ...productData, _id: result.insertedId });
 });
 
-app.put("/api/products/:id", async (req, res) => {
+app.put("/api/products/:id",verifyToken, async (req, res) => {
   const updatedData = req.body;
 
   if (!validateProduct(updatedData)) {
@@ -107,7 +113,7 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/products/:id", async (req, res) => {
+app.delete("/api/products/:id",verifyToken, async (req, res) => {
   try {
     const result = await productsCollection.findOneAndDelete({
       _id: new ObjectId(req.params.id),

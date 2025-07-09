@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard - ALPHAGEN</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    .navbar {
+      background: #0d6efd;
+      padding: 20px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar h1 {
+      font-size: 1.4rem;
+    }
+
+    .navbar button {
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .dashboard {
+      padding: 20px;
+    }
+
+    .summary {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background: #eee;
+    }
+
+    .add-btn {
+      background: #28a745;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    .form-popup {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    .form-popup input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .form-popup button {
+      margin-top: 10px;
+      padding: 10px;
+      border: none;
+      background: #0d6efd;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <h1>Admin Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="dashboard">
+    <div class="summary">
+      <div class="card" id="total-products">Total Products: 0</div>
+      <div class="card" id="low-stock">Low Stock: 0</div>
+    </div>
+
+    <button class="add-btn" onclick="openForm()">+ Add Product</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Brand</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="product-table">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add Product Form -->
+  <div class="form-popup" id="productForm">
+    <h3>Add Product</h3>
+    <input type="text" id="name" placeholder="Product Name" required />
+    <input type="text" id="brand" placeholder="Brand" required />
+    <input type="text" id="category" placeholder="Category" required />
+    <input type="number" id="price" placeholder="Price" required />
+    <input type="number" id="stock" placeholder="Stock" required />
+    <button onclick="addProduct()">Submit</button>
+  </div>
+
+  <div class="overlay" onclick="closeForm()"></div>
+
+  <script>
+    const token = localStorage.getItem("adminToken");
+    if (!token) window.location.href = "admin-login.html";
+
+    const backendURL = "https://your-backend-url.com/api/products";
+
+    async function fetchProducts() {
+      const res = await fetch(backendURL);
+      const products = await res.json();
+
+      document.getElementById("total-products").textContent = `Total Products: ${products.length}`;
+      document.getElementById("low-stock").textContent = `Low Stock: ${products.filter(p => p.stock < 5).length}`;
+
+      const table = document.getElementById("product-table");
+      table.innerHTML = "";
+      products.forEach(prod => {
+        const row = `
+          <tr>
+            <td>${prod.name}</td>
+            <td>${prod.brand}</td>
+            <td>${prod.category}</td>
+            <td>${prod.price}</td>
+            <td>${prod.stock}</td>
+            <td>
+              <button onclick="deleteProduct('${prod._id}')">Delete</button>
+            </td>
+          </tr>
+        `;
+        table.innerHTML += row;
+      });
+    }
+
+    function openForm() {
+      document.getElementById("productForm").style.display = "block";
+      document.querySelector(".overlay").style.display = "block";
+    }
+
+    function closeForm() {
+      document.getElementById("productForm").style.display = "none";
+      document.querySelector(".overlay").style.display = "none";
+    }
+
+    async function addProduct() {
+      const product = {
+        name: document.getElementById("name").value,
+        brand: document.getElementById("brand").value,
+        category: document.getElementById("category").value,
+        price: document.getElementById("price").value,
+        stock: document.getElementById("stock").value,
+      };
+
+      const res = await fetch(backendURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(product),
+      });
+
+      if (res.ok) {
+        closeForm();
+        fetchProducts();
+      } else {
+        alert("Error adding product.");
+      }
+    }
+
+    async function deleteProduct(id) {
+      const res = await fetch(`${backendURL}/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.ok) fetchProducts();
+      else alert("Failed to delete product.");
+    }
+
+    function logout() {
+      localStorage.removeItem("adminToken");
+      window.location.href = "admin-login.html";
+    }
+
+    fetchProducts();
+  </script>
+</body>
+</html>
