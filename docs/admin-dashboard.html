@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard - ALPHAGEN</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f4f4;
     }
-
     .navbar {
       background: #0d6efd;
       padding: 20px;
@@ -20,11 +20,9 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .navbar h1 {
       font-size: 1.4rem;
     }
-
     .navbar button {
       background: crimson;
       color: white;
@@ -33,18 +31,15 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
     .dashboard {
       padding: 20px;
     }
-
     .summary {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
       margin-bottom: 30px;
     }
-
     .card {
       background: white;
       padding: 20px;
@@ -53,24 +48,25 @@
       flex: 1;
       min-width: 200px;
       text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
     table {
       width: 100%;
       border-collapse: collapse;
       background: white;
     }
-
     th, td {
       padding: 12px;
       border: 1px solid #ddd;
       text-align: center;
     }
-
     th {
       background: #eee;
     }
-
     .add-btn {
       background: #28a745;
       color: white;
@@ -80,7 +76,6 @@
       margin-bottom: 20px;
       cursor: pointer;
     }
-
     .form-popup {
       display: none;
       position: fixed;
@@ -93,14 +88,12 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
       z-index: 1000;
     }
-
     .form-popup input {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
       font-size: 16px;
     }
-
     .form-popup button {
       margin-top: 10px;
       padding: 10px;
@@ -110,13 +103,15 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
     .overlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.3);
       z-index: 999;
+    }
+    button:hover {
+      opacity: 0.9;
     }
   </style>
 </head>
@@ -152,7 +147,7 @@
     </table>
   </div>
 
-  <!-- Add Product Form -->
+  <!-- Add/Edit Product Form -->
   <div class="form-popup" id="productForm">
     <h3>Add Product</h3>
     <input type="text" id="name" placeholder="Product Name" required />
@@ -160,46 +155,83 @@
     <input type="text" id="category" placeholder="Category" required />
     <input type="number" id="price" placeholder="Price" required />
     <input type="number" id="stock" placeholder="Stock" required />
+    <input type="hidden" id="editingId" />
     <button onclick="addProduct()">Submit</button>
   </div>
 
   <div class="overlay" onclick="closeForm()"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script>
     const token = localStorage.getItem("adminToken");
     if (!token) window.location.href = "admin-login.html";
 
-    const backendURL = "https://your-backend-url.com/api/products";
+    const backendURL = "https://heyz-electricals-and-electronis-website-2.onrender.com/api/products";
 
-    async function fetchProducts() {
-      const res = await fetch(backendURL);
-      const products = await res.json();
-
-      document.getElementById("total-products").textContent = `Total Products: ${products.length}`;
-      document.getElementById("low-stock").textContent = `Low Stock: ${products.filter(p => p.stock < 5).length}`;
-
-      const table = document.getElementById("product-table");
-      table.innerHTML = "";
-      products.forEach(prod => {
-        const row = `
-          <tr>
-            <td>${prod.name}</td>
-            <td>${prod.brand}</td>
-            <td>${prod.category}</td>
-            <td>${prod.price}</td>
-            <td>${prod.stock}</td>
-            <td>
-              <button onclick="deleteProduct('${prod._id}')">Delete</button>
-            </td>
-          </tr>
-        `;
-        table.innerHTML += row;
-      });
+    function showToast(message, type = "success") {
+      Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: type === "success" ? "#28a745" : "#dc3545",
+        close: true,
+      }).showToast();
     }
 
-    function openForm() {
-      document.getElementById("productForm").style.display = "block";
+    async function fetchProducts() {
+      try {
+        const res = await fetch(backendURL);
+        if (!res.ok) throw new Error("Failed to fetch products");
+
+        const products = await res.json();
+
+        document.getElementById("total-products").textContent = `Total Products: ${products.length}`;
+        document.getElementById("low-stock").textContent = `Low Stock: ${products.filter(p => p.stock < 5).length}`;
+
+        const table = document.getElementById("product-table");
+        table.innerHTML = "";
+        products.forEach(prod => {
+          const row = `
+            <tr>
+              <td>${prod.name}</td>
+              <td>${prod.brand}</td>
+              <td>${prod.category}</td>
+              <td>${prod.price}</td>
+              <td style="color:${prod.stock < 5 ? 'red' : 'green'}">${prod.stock}</td>
+              <td>
+                <button onclick="editProduct('${prod._id}')">Edit</button>
+                <button onclick="deleteProduct('${prod._id}')">Delete</button>
+              </td>
+            </tr>`;
+          table.innerHTML += row;
+        });
+      } catch (err) {
+        showToast("Could not load products.", "error");
+        console.error(err);
+      }
+    }
+
+    function openForm(editingData = null) {
+      const form = document.getElementById("productForm");
       document.querySelector(".overlay").style.display = "block";
+      form.style.display = "block";
+
+      if (editingData) {
+        document.getElementById("name").value = editingData.name;
+        document.getElementById("brand").value = editingData.brand;
+        document.getElementById("category").value = editingData.category;
+        document.getElementById("price").value = editingData.price;
+        document.getElementById("stock").value = editingData.stock;
+        document.getElementById("editingId").value = editingData._id;
+      } else {
+        document.getElementById("name").value = "";
+        document.getElementById("brand").value = "";
+        document.getElementById("category").value = "";
+        document.getElementById("price").value = "";
+        document.getElementById("stock").value = "";
+        document.getElementById("editingId").value = "";
+      }
     }
 
     function closeForm() {
@@ -212,12 +244,16 @@
         name: document.getElementById("name").value,
         brand: document.getElementById("brand").value,
         category: document.getElementById("category").value,
-        price: document.getElementById("price").value,
-        stock: document.getElementById("stock").value,
+        price: parseFloat(document.getElementById("price").value),
+        stock: parseInt(document.getElementById("stock").value),
       };
 
-      const res = await fetch(backendURL, {
-        method: "POST",
+      const editingId = document.getElementById("editingId").value;
+      const method = editingId ? "PUT" : "POST";
+      const url = editingId ? `${backendURL}/${editingId}` : backendURL;
+
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
@@ -228,8 +264,9 @@
       if (res.ok) {
         closeForm();
         fetchProducts();
+        showToast(editingId ? "Product updated successfully!" : "Product added successfully!");
       } else {
-        alert("Error adding product.");
+        showToast("Error saving product.", "error");
       }
     }
 
@@ -239,8 +276,22 @@
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (res.ok) fetchProducts();
-      else alert("Failed to delete product.");
+      if (res.ok) {
+        fetchProducts();
+        showToast("Product deleted.");
+      } else {
+        showToast("Failed to delete product.", "error");
+      }
+    }
+
+    function editProduct(id) {
+      fetch(`${backendURL}/${id}`)
+        .then(res => res.json())
+        .then(data => openForm(data))
+        .catch(err => {
+          showToast("Failed to load product for editing.", "error");
+          console.error(err);
+        });
     }
 
     function logout() {

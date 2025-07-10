@@ -84,13 +84,22 @@
       }
 
       try {
-        const res = await fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/admin/login", {
+        const res = await fetch("http://localhost:3000/api/admin/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
         });
 
         const data = await res.json();
+        if (res.ok) {
+       errorMsg.style.color = "green";
+        errorMsg.textContent = "Login successful! Redirecting...";
+        setTimeout(() => {
+        localStorage.setItem("adminToken", data.token);
+        window.location.href = "admin-dashboard.html";
+       }, 1000);
+       }
+
 
         if (res.ok) {
           localStorage.setItem("adminToken", data.token);
