@@ -185,6 +185,52 @@
   85% { opacity: 1; }
 }
 
+  .heart-burst {
+    position: absolute;
+   top: -10px;
+   left: 50%;
+   transform: translateX(-50%);
+   pointer-events: none;
+   opacity: 0;
+   animation: none;
+   font-size: 1.8rem;
+   z-index: 10;
+  }
+
+  @keyframes heartBurstScale {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+  }
+
+  .thumbs-up {
+    position: absolute;
+   top: -10px;
+   left: 50%;
+   transform: translateX(-50%);
+    pointer-events: none;
+   opacity: 0;
+   animation: none;
+   font-size: 1.6rem;
+   z-index: 10;
+   font-size: 2rem;
+  
+  }
+
+  @keyframes thumbsFloat {
+    0% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    50% { opacity: 0.9; transform: translateX(-50%) translateY(-20px) scale(1.3); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-40px) scale(0.8); }
+  }
+  .favorite-btn, .cart-btn {
+  position: relative;
+  overflow: visible;
+}
+  
+
+
+
+
   </style>
 </head>
 <body>
@@ -330,31 +376,91 @@
           <p>${product.description || ""}</p>
           <span>Price: Ksh ${product.price}</span>
           <span>Quantity: ${product.quantity || 0}</span>
-          <div>
-            <button onclick="addToCart('${product.id}')">Add to Cart</button>
-            <button onclick="toggleFavorite('${product.id}')">❤️</button>
-            <button onclick="window.location.href='product.html?id=${product.id}'">View Product</button>
-          </div>
+         <div class="button-group">
+           <button class="cart-btn" onclick="addToCart('${product.id}')">Add to Cart
+             <span class="thumbs-up">👍</span>
+           </button>
+
+           <button class="favorite-btn" onclick="toggleFavorite('${product.id}')">❤️
+           <span class="heart-burst"></span>
+           </button>
+           <button onclick="window.location.href='product.html?id=${product.id}'">View Product</button>
+         </div>
         `;
         container.appendChild(card);
       });
     }
 
     function addToCart(id) {
-      const product = products.find(p => p.id === id);
-      if (!product) return;
-      const existing = cart.find(p => p.id === id);
-      if (existing) existing.quantity += 1;
-      else cart.push({ ...product, quantity: 1 });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartUI();
-    }
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+
+  const card = [...document.querySelectorAll(".product-card")].find(c =>
+    c.innerHTML.includes(`addToCart('${id}')`)
+  );
+
+  const btn = card.querySelector(".cart-btn .thumbs-up");
+  if (btn) {
+    btn.style.opacity = "1";
+    btn.style.animationName = "thumbsFloat";
+    btn.style.animationDuration = "0.8s";
+    btn.style.animationTimingFunction = "ease-out";
+    btn.style.animationFillMode = "forwards";
+
+    setTimeout(() => {
+    btn.style.opacity = "0";
+    btn.style.animationName = "none";
+   }, 800);
+  }
+
+
+  const existing = cart.find(p => p.id === id);
+  if (existing) existing.quantity += 1;
+  else cart.push({ ...product, quantity: 1 });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartUI();
+
+
+
+}
+
 
     function toggleFavorite(id) {
-      favorites.has(id) ? favorites.delete(id) : favorites.add(id);
-      localStorage.setItem("favorites", JSON.stringify([...favorites]));
-      updateFavoriteUI();
-    }
+  const isFavorited = favorites.has(id);
+  const card = [...document.querySelectorAll(".product-card")].find(c =>
+    c.innerHTML.includes(`addToCart('${id}')`)
+  );
+
+  if (!card) return;
+
+  // Add animated SVG burst
+  const burst = card.querySelector(".favorite-btn .heart-burst");
+if (burst) {
+  burst.innerHTML = `
+    <svg viewBox="0 0 512 512" fill="red" width="24" height="24">
+      <path d="M471.7 73.6c-54.5-46.4-136-38.3-186.4 13.7L256 116.1l-29.3-28.8c-50.4-52-131.9-60.1-186.4-13.7C-13.7 123.9-10.6 211.4 43 263.7l175.6 171.8c12.5 12.3 32.7 12.3 45.2 0L469 263.7c53.6-52.3 56.7-139.8-2.3-190.1z"/>
+    </svg>`;
+  burst.style.opacity = "1";
+  burst.style.animation = "heartBurstScale 0.6s ease-out";
+  setTimeout(() => {
+    burst.style.opacity = "0";
+    burst.style.animation = "none";
+    burst.innerHTML = "";
+  }, 600);
+}
+
+  
+
+
+  // Toggle favorite state
+  isFavorited ? favorites.delete(id) : favorites.add(id);
+  localStorage.setItem("favorites", JSON.stringify([...favorites]));
+  updateFavoriteUI();
+  if (card.querySelector(".heart-burst")) return;
+
+}
+
 
     function updateCartUI() {
       const cartCount = document.getElementById("cartCount");
