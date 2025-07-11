@@ -21,6 +21,9 @@ app.use(express.json());
 
 const adminRoutes = require('./routes/admin');
 app.use('/api/admin', adminRoutes);
+const messageRoutes = require('./routes/messages');
+app.use('/api/messages', messageRoutes);
+
 
 
 // Validation function for product fields
