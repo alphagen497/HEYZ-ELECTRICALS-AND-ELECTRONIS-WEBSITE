@@ -298,6 +298,19 @@
       localStorage.removeItem("adminToken");
       window.location.href = "admin-login.html";
     }
+    async function verifyToken() {
+  const res = await fetch("https://your-backend.onrender.com/api/admin/verify", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) {
+    localStorage.removeItem("adminToken");
+    window.location.href = "admin-login.html";
+  }
+}
+verifyToken();
 
     fetchProducts();
   </script>
