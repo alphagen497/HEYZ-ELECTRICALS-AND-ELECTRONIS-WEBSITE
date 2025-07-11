@@ -144,13 +144,15 @@
   <div class="contact-section">
     <div class="contact-form" data-aos="fade-right">
       <h2>Send Us a Message</h2>
-      <form>
-        <input type="text" placeholder="Your Name" required />
-        <input type="email" placeholder="Your Email" required />
-        <input type="tel" placeholder="Phone Number" />
-        <textarea rows="5" placeholder="Your Message" required></textarea>
-        <button type="submit">Send Message</button>
-      </form>
+      <form id="contactForm">
+        <input type="text" name="name" placeholder="Your Name" required />
+       <input type="email" name="email" placeholder="Your Email" required />
+       <input type="tel" name="phone" placeholder="Phone Number" />
+       <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+       <button type="submit">Send Message</button>
+     </form>
+     <p id="formStatus" style="color: green; margin-top: 10px;"></p>
+
     </div>
 
     <div class="contact-details" data-aos="fade-left">
@@ -178,6 +180,46 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script>AOS.init();</script>
+  <script>
+AOS.init();
+document.getElementById("contactForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const form = new FormData(this);
+  const data = Object.fromEntries(form.entries());
+
+  const status = document.getElementById("formStatus");
+  const button = this.querySelector("button");
+  button.disabled = true;
+  button.textContent = "Sending...";
+
+  try {
+    const res = await fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      status.style.color = "green";
+      status.textContent = result.message || "Message sent!";
+      this.reset();
+    } else {
+      status.style.color = "red";
+      status.textContent = result.error || "Something went wrong.";
+    }
+  } catch (err) {
+    status.style.color = "red";
+    status.textContent = "Message not sent! Please try again.";
+    console.error("Fetch error:", err);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Send Message";
+  }
+});
+
+
+</script>
+
 </body>
 </html>
