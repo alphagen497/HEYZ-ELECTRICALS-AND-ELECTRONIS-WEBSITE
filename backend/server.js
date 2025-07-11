@@ -4,6 +4,8 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
+const mongoose = require("mongoose");
+
 
 const verifyToken = require("./middleware/auth");
 
@@ -140,6 +142,13 @@ async function startServer() {
     process.exit(1); // Stop the server if MongoDB fails
   }
 }
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("✅ Mongoose connected (for admin)."))
+  .catch(err => {
+    console.error("❌ Mongoose connection error:", err);
+    process.exit(1);
+  });
+
 
 // Start everything
 startServer();
