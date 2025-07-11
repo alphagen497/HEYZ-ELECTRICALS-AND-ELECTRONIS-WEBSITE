@@ -182,17 +182,17 @@
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
 AOS.init();
-document.getElementById("contactForm").addEventListener("submit", async function (e) {
+document.getElementById("contactForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   const form = new FormData(this);
   const data = Object.fromEntries(form.entries());
-
   const status = document.getElementById("formStatus");
-  const button = this.querySelector("button");
-  button.disabled = true;
-  button.textContent = "Sending...";
 
   try {
+    const button = this.querySelector("button");
+    button.disabled = true;
+    button.textContent = "Sending...";
+
     const res = await fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -200,25 +200,22 @@ document.getElementById("contactForm").addEventListener("submit", async function
     });
 
     const result = await res.json();
-    if (res.ok) {
-      status.style.color = "green";
-      status.textContent = result.message || "Message sent!";
-      this.reset();
-    } else {
-      status.style.color = "red";
-      status.textContent = result.error || "Something went wrong.";
-    }
+    status.style.color = "green";
+    status.textContent = result.message || "Message sent!";
+    this.reset();
+
+    setTimeout(() => {
+      status.textContent = "";
+      button.disabled = false;
+      button.textContent = "Send Message";
+    }, 5000);
+
   } catch (err) {
     status.style.color = "red";
     status.textContent = "Message not sent! Please try again.";
-    console.error("Fetch error:", err);
-  } finally {
-    button.disabled = false;
-    button.textContent = "Send Message";
+    console.error(err);
   }
 });
-
-
 </script>
 
 </body>
