@@ -54,6 +54,19 @@
       transform: scale(1.03);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
+    button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #0d6efd;
+  color: white;
+  cursor: pointer;
+ }
+ button + button {
+  margin-left: 5px;
+  background: #dc3545;
+ }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -79,9 +92,9 @@
     .form-popup {
       display: none;
       position: fixed;
-      top: 20%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       left: 50%;
-      transform: translateX(-50%);
       background: white;
       padding: 30px;
       border-radius: 10px;
@@ -116,6 +129,29 @@
     button:hover {
   opacity: 0.85;
 }
+.form-popup textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  resize: vertical;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.form-popup {
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+.form-popup.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
   </style>
 </head>
 <body>
@@ -133,21 +169,7 @@
 
     <button class="add-btn" onclick="openForm()">+ Add Product</button>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Brand</th>
-          <th>Category</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="product-table">
-        <!-- Filled by JS -->
-      </tbody>
-    </table>
+    
     <h2>Customer Messages</h2>
 <table>
   <thead>
@@ -164,6 +186,31 @@
      <!-- Messages will be loaded here -->
      </tbody>
      </table>
+     <!-- Reply Modal -->
+<div class="form-popup" id="replyForm">
+  <h3>Reply to Customer</h3>
+  <input type="email" id="replyEmail" placeholder="Customer Email" readonly />
+  <input type="text" id="replySubject" placeholder="Subject" />
+  <textarea id="replyMessage" rows="5" placeholder="Type your message here..." required></textarea>
+  <button onclick="sendReply()">Send Reply</button>
+</div>
+<h2>Product Inventory</h2>
+<table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Brand</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="product-table">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+
 
   </div>
 
@@ -180,8 +227,27 @@
   </div>
 
   <div class="overlay" onclick="closeForm()"></div>
+  <div id="spinner" style="
+   display: none;
+   position: fixed;
+   inset: 0;
+   background: rgba(255,255,255,0.6);
+   z-index: 2000;
+   justify-content: center;
+   align-items: center;
+   ">
+   <div style="
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #0d6efd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+   "></div>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script> 
   <script>
     const token = localStorage.getItem("adminToken");
     if (!token) window.location.href = "admin-login.html";
@@ -256,10 +322,10 @@
 
     function closeForm() {
       document.getElementById("productForm").style.display = "none";
+      document.getElementById("replyForm").classList.remove("show");
       document.querySelector(".overlay").style.display = "none";
     }
-
-    async function addProduct() {
+     async function addProduct() {
       const product = {
         name: document.getElementById("name").value,
         brand: document.getElementById("brand").value,
@@ -353,7 +419,8 @@ async function fetchMessages() {
       <td>${msg.message}</td>
       <td>${new Date(msg.createdAt).toLocaleString()}</td>
       <td>
-        <button onclick="archiveMessage('${msg._id}')" aria-label="Archive message">Archive</button>
+        <button onclick="openReplyForm('${msg.email}')">Reply</button>
+        <button onclick="archiveMessage('${msg._id}')">Archive</button>
         <button onclick="deleteMessage('${msg._id}')">Delete</button>
       </td>
     </tr>`;
@@ -401,6 +468,60 @@ async function archiveMessage(id) {
     showToast("Error archiving", "error");
   }
 }
+function openReplyForm(email) {
+  document.getElementById("replyEmail").value = email;
+  document.getElementById("replySubject").value = "Reply from HEYZ Support";
+  document.getElementById("replyMessage").value = "";
+  document.getElementById("replyForm").classList.add("show");
+  document.querySelector(".overlay").style.display = "block";
+}
+
+async function sendReply() {
+  const to = document.getElementById("replyEmail").value;
+  const subject = document.getElementById("replySubject").value;
+  const message = document.getElementById("replyMessage").value;
+  const btn = document.querySelector("#replyForm button");
+
+  if (!message.trim()) {
+    showToast("Reply message cannot be empty", "error");
+    return;
+  }
+
+  // Disable button and show "Sending..."
+  showSpinner();
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+
+  try {
+    const res = await fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/messages/reply", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ to, subject, message }),
+    });
+
+    const result = await res.json();
+    showToast(result.message || "Reply sent!");
+    closeForm();
+  } catch (err) {
+    showToast("Failed to send reply", "error");
+    console.error(err);
+  } finally {
+    // Re-enable button and reset text
+    hideSpinner();
+    btn.disabled = false;
+    btn.textContent = "Send Reply";
+  }
+}
+function showSpinner() {
+  document.getElementById("spinner").style.display = "flex";
+}
+function hideSpinner() {
+  document.getElementById("spinner").style.display = "none";
+}
+
 
 
 verifyToken();
@@ -408,5 +529,6 @@ verifyToken();
     fetchProducts();
     fetchMessages();
   </script>
+  
 </body>
 </html>
