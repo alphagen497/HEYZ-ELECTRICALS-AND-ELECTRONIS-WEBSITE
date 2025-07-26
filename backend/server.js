@@ -6,27 +6,33 @@ const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 
-
-const verifyToken = require("./middleware/auth");
-
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const client = new MongoClient(process.env.MONGODB_URI);
 let productsCollection;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Routes
 const adminRoutes = require('./routes/admin');
-app.use('/api/admin', adminRoutes);
 const messageRoutes = require('./routes/messages');
+const authRoutes = require('./routes/authRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+
+app.use('/api/admin', adminRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/auth', authRoutes); // ✅ Mounted here
+app.use('/api/orders', orderRoutes);
+app.use('/api/chat', chatRoutes);
 
+// Auth Middleware (used only for protected product routes)
+const { verifyToken } = require("./middleware/auth");
 
-
-// Validation function for product fields
+// Product Validation Function
 function validateProduct(data) {
   const { name, price, quantity, description } = data;
   return (
@@ -38,7 +44,7 @@ function validateProduct(data) {
   );
 }
 
-// API Routes
+// Product Routes
 app.get("/api/products", async (req, res) => {
   try {
     const products = await productsCollection.find().toArray();
@@ -60,14 +66,13 @@ app.get("/api/products/:id", async (req, res) => {
   }
 });
 
-app.post("/api/products",verifyToken, async (req, res) => {
+app.post("/api/products", verifyToken, async (req, res) => {
   const productData = req.body;
 
   if (!validateProduct(productData)) {
     return res.status(400).json({ error: "Invalid product data" });
   }
 
-  // Add offerExpiry if discounted
   if (
     typeof productData.originalPrice === "number" &&
     typeof productData.price === "number" &&
@@ -82,7 +87,7 @@ app.post("/api/products",verifyToken, async (req, res) => {
   res.status(201).json({ ...productData, _id: result.insertedId });
 });
 
-app.put("/api/products/:id",verifyToken, async (req, res) => {
+app.put("/api/products/:id", verifyToken, async (req, res) => {
   const updatedData = req.body;
 
   if (!validateProduct(updatedData)) {
@@ -119,7 +124,7 @@ app.put("/api/products/:id",verifyToken, async (req, res) => {
   }
 });
 
-app.delete("/api/products/:id",verifyToken, async (req, res) => {
+app.delete("/api/products/:id", verifyToken, async (req, res) => {
   try {
     const result = await productsCollection.findOneAndDelete({
       _id: new ObjectId(req.params.id),
@@ -132,7 +137,7 @@ app.delete("/api/products/:id",verifyToken, async (req, res) => {
   }
 });
 
-// Connect to MongoDB
+// MongoDB Native Connection (for raw product data)
 async function startServer() {
   try {
     console.log("🔄 Connecting to MongoDB...");
@@ -142,19 +147,30 @@ async function startServer() {
     console.log("✅ MongoDB connected.");
   } catch (err) {
     console.error("❌ Failed to connect to MongoDB", err);
-    process.exit(1); // Stop the server if MongoDB fails
+    process.exit(1);
   }
 }
+
+// Mongoose Connection (for User/Admin models)
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ Mongoose connected (for admin)."))
+  .then(() => console.log("✅ Mongoose connected (for models)."))
   .catch(err => {
     console.error("❌ Mongoose connection error:", err);
     process.exit(1);
   });
 
-
-// Start everything
+// Start Server
 startServer();
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+
+  // Log active routes
+  if (app._router && app._router.stack) {
+    app._router.stack.forEach((r) => {
+      if (r.route && r.route.path) {
+        const method = Object.keys(r.route.methods).join(",").toUpperCase();
+        console.log(`➡️ ${method} ${r.route.path}`);
+      }
+    });
+  }
 });

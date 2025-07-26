@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Message = require('../models/Message');
-const verifyToken = require('../middleware/auth');
+const { verifyToken, isAdmin } = require("../middleware/auth");
 const nodemailer = require("nodemailer");
 
 // Setup Nodemailer transporter

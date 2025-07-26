@@ -6,7 +6,8 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const verifyToken = require('../middleware/auth');
+const { verifyToken, isAdmin } = require('../middleware/auth');
+
 
 router.get('/verify', verifyToken, (req, res) => {
   res.json({ message: 'Token valid' });
@@ -94,6 +95,10 @@ router.post('/reset-password', async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+router.get('/admin/data', verifyToken, isAdmin, (req, res) => {
+  res.json({ message: 'Admin content visible only to verified admins' });
+});
+
 
 
 module.exports = router;

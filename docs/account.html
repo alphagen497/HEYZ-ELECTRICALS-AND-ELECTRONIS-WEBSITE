@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account - HEYZ</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background: #f4f4f4;
+    }
+
+    .sidebar {
+      width: 70px;
+      background-color: #556783;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 60px;
+      gap: 25px;
+      margin-top: 50px;
+      position: relative;
+    }
+
+    .sidebar i {
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar i:hover {
+      color: #ffc107;
+    }
+
+    /* Fixed lorry icon with HEYZ overlay */
+    .truck-container {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      background-color: rgb(100, 106, 125);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .truck-container i {
+      font-size: 1.7rem;
+      color: white;
+    }
+
+    .truck-text {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.6rem;
+      font-weight: bold;
+      color: rgb(35, 108, 245);
+      font-family: Arial, sans-serif;
+      pointer-events: none;
+    }
+
+    .sidebar .fa-heart {
+      color: red;
+    }
+
+    .logo-top {
+      position: absolute;
+      top: 10px;
+      left: 8px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #1a66e1;
+      display: flex;
+      font-display: fallback;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background: #0d6efd;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .navbar .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .chat-box, .tracking-box, .favorites-box {
+      display: none;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      position: absolute;
+      bottom: 1px;
+      left: 1px;
+      right: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-top">HEYZ</div>
+
+  <div class="sidebar">
+    <i class="fas fa-comments" onclick="toggleBox('chat-box')" title="Chat"></i>
+
+    <!-- Fixed lorry icon -->
+    <div class="truck-container" onclick="toggleBox('tracking-box')" title="Track Delivery">
+      <i class="fas fa-truck"></i>
+      <div class="truck-text">HEYZ</div>
+    </div>
+
+    <i class="fas fa-heart" onclick="toggleBox('favorites-box')" title="Favorites"></i>
+    <i class="fas fa-cog" title="Settings"></i>
+  </div>
+
+  <div class="main-content">
+    <div class="navbar">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html">Shop</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="#">Account</a></li>
+      </ul>
+    </div>
+
+    <div class="content-area">
+      <div id="chat-box" class="chat-box">
+        <h3>Chat with Assistant</h3>
+        <p>Type your query or concern below.</p>
+        <textarea rows="4" style="width:100%;"></textarea><br>
+        <button>Send</button>
+      </div>
+
+      <div id="tracking-box" class="tracking-box">
+        <h3>Track Your Order</h3>
+        <p>Tracking info will appear here in real time.</p>
+      </div>
+
+      <div id="favorites-box" class="favorites-box">
+        <h3>Favorites</h3>
+        <ul>
+          <li><a href="products.html">Item from products.html</a></li>
+          <li><a href="product.html">Item from product.html</a></li>
+          <li><a href="offer.html">Item from offer.html</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 HEYZ COMPANY.LTD | HEYZ ELECTRICALS AND ELECTRONICS</p>
+      <p>Email: support@shiroheyz.co.ke | Phone: +254 722217517</p>
+      <a href="privacy-policy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms</a>
+    </footer>
+  </div>
+
+  <script>
+    function toggleBox(id) {
+      document.querySelectorAll('.chat-box, .tracking-box, .favorites-box').forEach(el => el.style.display = 'none');
+      const box = document.getElementById(id);
+      if (box) box.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
