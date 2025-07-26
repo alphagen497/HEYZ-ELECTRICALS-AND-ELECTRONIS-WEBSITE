@@ -127,7 +127,7 @@
     <div class="toggle-form">
       <span id="toggleText">Don't have an account? <a href="#" onclick="toggleForm()">Register</a></span>
     </div>
-    <div class="guest-link"><a href="index.html">Continue as Guest</a></div>
+    <div class="guest-link"><a href="facex.html">Continue as Guest</a></div>
     <div class="logout-link"><a href="#" onclick="logout()">Logout</a></div>
   </div>
 
@@ -207,7 +207,7 @@
         localStorage.setItem("token", data.token);
         alert("Logged in successfully!");
         logoutLink.style.display = "block";
-        window.location.href = "index.html";
+        window.location.href = "facex.html";
       } else {
         alert("Account created! Please log in.");
         toggleForm();
