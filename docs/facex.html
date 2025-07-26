@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALPHAGEN COMPANY.LTD</title>
+  <meta name="description" content="HEYZ ELECTRICALS AND ELECTRONICS - Trusted supplier of quality electrical goods and electronics in Kenya. Affordable prices, fast delivery.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    html, body {
+   overflow-x: hidden;
+   }
+   body {
+   font-family: Arial, sans-serif;
+   background-color: #f4f4f4;
+   color: #333;
+   overflow-x: hidden; /* Prevent horizontal scroll */
+   }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; }
+
+    .navbar {
+      background: #0d6efd;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding-left: 0px;
+    }
+    .navbar .logo { font-weight: bold; font-size: 1.4rem;  }
+    .navbar .nav-links { list-style: none; display: flex; gap: 20px; padding-left: 20px; }
+    .navbar .nav-links a { color: white; text-decoration: none; font-weight: bold; }
+
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background-color: #68e7f8;
+    }
+    .hero h1 { color: #0922dd; }
+    .hero p { font-size: 1.1rem; margin-top: 10px; }
+
+    .phone-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      margin-top: 10px;
+    }
+    .phone-icon {
+      color: green;
+      animation: pulse 2s infinite;
+    }
+
+    .cta-button {
+      margin: 30px auto;
+      display: inline-block;
+      padding: 15px 30px;
+      background-color: crimson;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+    .cta-button:hover { background-color: darkred; }
+
+    .slideshow-container {
+      width: 100%;
+      max-width: 1000px;
+      aspect-ratio: 16 / 9;
+      margin: 30px auto;
+      overflow: hidden;
+      position: relative;
+      border-radius: 12px;
+      background: linear-gradient(to right, #f0f0f0, #d9d9d9);
+    }
+
+    .slideshow-track {
+      display: flex;
+      height: 100%;
+      transition: transform 1s ease-in-out;
+    }
+
+    .slideshow-track img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      flex-shrink: 0;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 40px 20px;
+    }
+    .hero-grid img {
+      width: 100%;
+      border-radius: 10px;
+      object-fit: cover;
+      height: 200px;
+    }
+
+    .section {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .section h2 { margin-bottom: 20px; }
+    .section p { font-size: 1.1rem; line-height: 1.6; }
+
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 30px 10px;
+    }
+    footer a { color: #ddd; text-decoration: none; margin: 0 10px; }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0,128,0,0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(0,128,0,0); }
+      100% { box-shadow: 0 0 0 0 rgba(0,128,0,0); }
+    }
+
+    @media (max-width: 768px) {
+      .cta-button {
+        padding: 12px 20px;
+        font-size: 1rem;
+      }
+
+      .phone-container {
+        font-size: 16px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">HEYZ</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login2acc.html" style="background: rgb(19, 84, 249); color: #f7f8fa; border-radius: 0px;">Account</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero" data-aos="fade-down">
+    <h1>HEYZ ELECTRICALS AND ELECTRONICS</h1>
+    <p>WHEN IT COMES TO <strong>QUALITY</strong>, WE ARE THE BEST.</p>
+    <div class="phone-container">
+      <i class="fas fa-phone phone-icon"></i><span>+254 722217517</span>
+    </div>
+    <a href="products.html" class="cta-button">Shop Now</a>
+  </div>
+
+  <div class="slideshow-container" id="slideshow-container" data-aos="zoom-in">
+    <div class="slideshow-track" id="slideshow-track"></div>
+  </div>
+
+  <div class="hero-grid" data-aos="fade-up">
+    <img src="istockphoto-2161207840-612x612.jpg" alt="Banner Image">
+    <img src="istockphoto-2159483944-612x612.jpg" alt="Banner Image">
+    <img src="istockphoto-2159484369-612x612.jpg" alt="Banner Image">
+    <img src="istockphoto-2159484144-612x612.jpg" alt="Banner Image">
+    <img src="istockphoto-1022485434-612x612.jpg" alt="Banner Image">
+    <img src="istockphoto-2159484022-612x612.jpg" alt="Banner Image">
+  </div>
+
+  <section class="section" id="about" data-aos="fade-left">
+    <h2>About Us</h2>
+    <p>We are a trusted electrical and electronics company delivering quality goods across Kenya. Whether you're looking for home appliances, power tools, or smart gadgets, HEYZ has you covered.</p>
+  </section>
+
+  <footer id="contact">
+    <p>&copy; 2025 HEYZ COMPANY.LTD | HEYZ ELECTRICALS AND ELECTRONICS</p>
+    <p>Email: support@shiroheyz.co.ke | Phone: +254 722217517</p>
+    <div>
+      <a href="privacy-policy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms</a>
+      <a href="admin-login.html" style="color: #111; font-size: 0.8em; margin-left: 20px;">Admin Login</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    const track = document.getElementById("slideshow-track");
+    const container = document.getElementById("slideshow-container");
+    let index = 0;
+    let total = 0;
+    let autoSlide;
+
+    function updateSlidePosition() {
+      track.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    function nextSlide() {
+      index = (index + 1) % total;
+      updateSlidePosition();
+    }
+
+    function startAutoSlide() {
+      autoSlide = setInterval(nextSlide, 4000);
+    }
+
+    function stopAutoSlide() {
+      clearInterval(autoSlide);
+    }
+
+    container.addEventListener("mouseenter", stopAutoSlide);
+    container.addEventListener("mouseleave", startAutoSlide);
+
+    fetch("https://heyz-electricals-and-electronis-website-2.onrender.com/api/products")
+      .then(response => response.json())
+      .then(products => {
+        products.forEach(product => {
+          const img = document.createElement("img");
+          img.src = product.image || product.images?.[0] || "https://via.placeholder.com/800x150?text=No+Image";
+          img.alt = product.name || "Product";
+          track.appendChild(img);
+        });
+        total = products.length;
+        updateSlidePosition();
+        startAutoSlide();
+      })
+      .catch(err => console.error("Failed to load slideshow:", err));
+
+    // Touch support
+    let startX = 0;
+    track.addEventListener("touchstart", (e) => {
+      startX = e.touches[0].clientX;
+    });
+
+    track.addEventListener("touchend", (e) => {
+      const endX = e.changedTouches[0].clientX;
+      if (startX - endX > 50) nextSlide();
+      else if (endX - startX > 50) {
+        index = (index - 1 + total) % total;
+        updateSlidePosition();
+      }
+    });
+  </script>
+</body>
+</html>
