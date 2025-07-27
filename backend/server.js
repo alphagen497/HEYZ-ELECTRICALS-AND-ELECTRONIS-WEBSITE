@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,7 @@ let productsCollection;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../docs")));
 
 // Routes
 const adminRoutes = require('./routes/admin');
@@ -22,14 +24,16 @@ const messageRoutes = require('./routes/messages');
 const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const aiChatRoute = require("./routes/AI-chat");
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/messages', messageRoutes);
-app.use('/api/auth', authRoutes); // ✅ Mounted here
+app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/AI-chat', aiChatRoute);
 
-// Auth Middleware (used only for protected product routes)
+// Auth Middleware
 const { verifyToken } = require("./middleware/auth");
 
 // Product Validation Function
@@ -56,9 +60,7 @@ app.get("/api/products", async (req, res) => {
 
 app.get("/api/products/:id", async (req, res) => {
   try {
-    const product = await productsCollection.findOne({
-      _id: new ObjectId(req.params.id),
-    });
+    const product = await productsCollection.findOne({ _id: new ObjectId(req.params.id) });
     if (!product) return res.status(404).json({ error: "Product not found" });
     res.json(product);
   } catch {
@@ -137,7 +139,7 @@ app.delete("/api/products/:id", verifyToken, async (req, res) => {
   }
 });
 
-// MongoDB Native Connection (for raw product data)
+// MongoDB Connection and Server Start
 async function startServer() {
   try {
     console.log("🔄 Connecting to MongoDB...");
@@ -145,13 +147,28 @@ async function startServer() {
     const db = client.db("products");
     productsCollection = db.collection("products");
     console.log("✅ MongoDB connected.");
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+
+      // Log active routes
+      if (app._router && app._router.stack) {
+        app._router.stack.forEach((r) => {
+          if (r.route && r.route.path) {
+            const method = Object.keys(r.route.methods).join(",").toUpperCase();
+            console.log(`➡️ ${method} ${r.route.path}`);
+          }
+        });
+      }
+    });
+
   } catch (err) {
     console.error("❌ Failed to connect to MongoDB", err);
     process.exit(1);
   }
 }
 
-// Mongoose Connection (for User/Admin models)
+// Mongoose for Models
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ Mongoose connected (for models)."))
   .catch(err => {
@@ -159,18 +176,4 @@ mongoose.connect(process.env.MONGODB_URI)
     process.exit(1);
   });
 
-// Start Server
 startServer();
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-
-  // Log active routes
-  if (app._router && app._router.stack) {
-    app._router.stack.forEach((r) => {
-      if (r.route && r.route.path) {
-        const method = Object.keys(r.route.methods).join(",").toUpperCase();
-        console.log(`➡️ ${method} ${r.route.path}`);
-      }
-    });
-  }
-});
