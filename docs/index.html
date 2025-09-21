@@ -139,9 +139,11 @@
   const logoutLink = document.querySelector(".logout-link");
   const nameInput = document.getElementById("name");
 
-  const API_BASE_URL = "https://heyz-electricals-and-electronis-website-2.onrender.com"; // ✅ Set your backend URL here
+  // ✅ Your deployed backend
+  const API_BASE_URL = "https://heyz-electricals-and-electronis-website-2.onrender.com"; 
   let isLogin = true;
 
+  // 🔄 Toggle Login/Register form
   function toggleForm() {
     isLogin = !isLogin;
     formTitle.innerText = isLogin ? "Sign In" : "Register";
@@ -152,6 +154,7 @@
     nameInput.style.display = isLogin ? "none" : "block";
   }
 
+  // 👁 Toggle password visibility
   function togglePassword() {
     const passwordInput = document.getElementById("password");
     const icon = document.querySelector(".toggle-password");
@@ -166,20 +169,23 @@
     }
   }
 
+  // 🚪 Logout
   function logout() {
     localStorage.removeItem("token");
     alert("You have been logged out.");
     window.location.reload();
   }
 
+  // 📝 Handle Login/Register
   authForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const name = nameInput.value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-    const url = `${API_BASE_URL}${endpoint}`; // ✅ Use full URL
+    const url = `${API_BASE_URL}${endpoint}`;
 
     const payload = isLogin
       ? { email, password }
@@ -207,21 +213,22 @@
         localStorage.setItem("token", data.token);
         alert("Logged in successfully!");
         logoutLink.style.display = "block";
-        window.location.href = "facex.html";
+        window.location.href = "facex.html"; // ✅ redirect to facex.html
       } else {
         alert("Account created! Please log in.");
-        toggleForm();
+        toggleForm(); // switch to login form
       }
     } catch (err) {
       alert(err.message);
     }
   });
 
-  // Auto show logout if token exists
+  // ✅ Auto-show logout link if token exists
   if (localStorage.getItem("token")) {
     logoutLink.style.display = "block";
   }
 </script>
+
 
 </body>
 </html>
